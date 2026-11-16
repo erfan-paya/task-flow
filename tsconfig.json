@@ -10,7 +10,7 @@
     "target": "ES2024",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "types": [],
+    "types": ["node"],
 
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
