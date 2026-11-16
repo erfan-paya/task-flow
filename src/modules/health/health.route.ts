@@ -1,6 +1,7 @@
-import { prisma } from "@/database/prisma.js";
-import { Router } from "express";
 import type { Request, Response } from "express";
+import { Router } from "express";
+
+import { prisma } from "@/database/prisma.js";
 
 const router = Router();
 
@@ -26,6 +27,6 @@ router.get("/health", async (_req: Request, res: Response) => {
             },
         });
     }
-})
+});
 
-export { router as healthRouter }
+export { router as healthRouter };

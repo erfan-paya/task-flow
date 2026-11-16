@@ -1,6 +1,5 @@
-
-import { env } from "@/config/env.js";
 import app from "@/app.js";
+import { env } from "@/config/env.js";
 import { prisma } from "@/database/prisma.js";
 
 const PORT = env.port;
@@ -33,7 +32,6 @@ async function startServer(): Promise<void> {
         process.on("SIGTERM", () => {
             void shutdown(server, 0);
         });
-
     } catch (error) {
         console.error("Server startup failed:", error);
 
@@ -42,10 +40,7 @@ async function startServer(): Promise<void> {
     }
 }
 
-async function shutdown(
-    server: ReturnType<typeof app.listen>,
-    exitCode: number,
-): Promise<void> {
+async function shutdown(server: ReturnType<typeof app.listen>, exitCode: number): Promise<void> {
     if (isShuttingDown) return;
 
     isShuttingDown = true;

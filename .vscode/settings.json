@@ -1,0 +1,15 @@
+{
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true,
+
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.organizeImports": "never"
+    },
+
+    "[prisma]": {
+        "editor.defaultFormatter": "Prisma.prisma"
+    },
+
+    "js/ts.tsdk.path": "node_modules/typescript/lib"
+}
