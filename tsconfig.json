@@ -3,6 +3,9 @@
 
     "rootDir": "./src",
     "outDir": "./dist",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
     
     "target": "ES2024",
     "module": "NodeNext",
