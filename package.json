@@ -1,0 +1,19 @@
+{
+  "name": "task-flow",
+  "version": "1.0.0",
+  "description": "A task management REST API built with Node.js, TypeScript, Express, and PostgreSQL.",
+  "homepage": "https://github.com/erfan-paya/task-flow#readme",
+  "bugs": {
+    "url": "https://github.com/erfan-paya/task-flow/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/erfan-paya/task-flow.git"
+  },
+  "author": "Erfan Paya",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
