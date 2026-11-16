@@ -1,73 +1,81 @@
+
 import { env } from "@/config/env.js";
 import app from "@/app.js";
 import { prisma } from "@/database/prisma.js";
 
 const PORT = env.port;
-
 let isShuttingDown = false;
 
-async function startServer() {
+async function startServer(): Promise<void> {
     try {
-        
+        // 1. Connect to PostgreSQL and verify connectivity.
         await prisma.$connect();
+        await prisma.$queryRaw`SELECT 1`;
+
         console.log("Database connected successfully");
 
+        // 2. Start Express.
         const server = app.listen(PORT, () => {
             console.log(`Server running on port ${PORT}`);
         });
 
-        const shutdown = async (signal: string): Promise<void> => {
-            if (isShuttingDown) return;
-
-            isShuttingDown = true;
-            console.log(`${signal} received. Shutting down...`);
-
-            try {
-                await new Promise<void>((resolve, reject) => {
-                    server.close((error) => {
-                        if (error) {
-                            reject(error);
-                        } else {
-                            resolve();
-                        }
-                    });
-                });
-
-                console.log("HTTP server closed successfully");
-            } catch (error) {
-                console.error("Error closing HTTP server:", error);
-                process.exitCode = 1;
-            } finally {
-                try {
-                    await prisma.$disconnect();
-                    console.log("Database disconnected successfully");
-                } catch (error) {
-                    console.error("Error disconnecting from database:", error);
-                    process.exitCode = 1;
-                }
-            }
-        };
-
+        // 3. Handle HTTP server errors (e.g. EADDRINUSE).
         server.on("error", async (error) => {
             console.error("HTTP server error:", error);
-            await shutdown("HTTP server error");
-            process.exitCode = 1;
+            await shutdown(server, 1);
         });
 
-        process.on("SIGINT", () => shutdown("SIGINT"));
-        process.on("SIGTERM", () => shutdown("SIGTERM"));
+        // 4. Handle process termination.
+        process.on("SIGINT", () => {
+            void shutdown(server, 0);
+        });
+
+        process.on("SIGTERM", () => {
+            void shutdown(server, 0);
+        });
 
     } catch (error) {
-        console.error("Failed to start server:", error);
+        console.error("Server startup failed:", error);
 
-        try {
-            await prisma.$disconnect();
-        } catch (disconnectError) {
-            console.error("Error disconnecting from database:", disconnectError);
-        }
-
+        await prisma.$disconnect();
         process.exitCode = 1;
     }
 }
 
-startServer();
+async function shutdown(
+    server: ReturnType<typeof app.listen>,
+    exitCode: number,
+): Promise<void> {
+    if (isShuttingDown) return;
+
+    isShuttingDown = true;
+    console.log("Shutting down...");
+
+    try {
+        // Close HTTP server only if it is listening.
+        if (server.listening) {
+            await new Promise<void>((resolve, reject) => {
+                server.close((error) => {
+                    if (error) reject(error);
+                    else resolve();
+                });
+            });
+        }
+    } catch (error) {
+        console.error("HTTP server shutdown failed:", error);
+        exitCode = 1;
+    }
+
+    try {
+        await prisma.$disconnect();
+        console.log("Database disconnected successfully");
+    } catch (error) {
+        console.error("Database disconnection failed:", error);
+        exitCode = 1;
+    }
+
+    process.exitCode = exitCode;
+    console.log("Shutdown complete");
+}
+
+void startServer();
