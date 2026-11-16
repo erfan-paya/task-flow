@@ -1,13 +1,18 @@
 import eslint from "@eslint/js";
+import { globalIgnores } from "eslint/config";
 import prettier from "eslint-config-prettier";
 import simpleImportSort from "eslint-plugin-simple-import-sort";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-    {
-        ignores: ["dist", "node_modules", "coverage", "prisma/migrations", "src/generated"],
-    },
+    globalIgnores([
+        "**/dist/**",
+        "**/node_modules/**",
+        "**/coverage/**",
+        "**/generated/**",
+        "prisma/migrations/**",
+    ]),
 
     eslint.configs.recommended,
     ...tseslint.configs.recommendedTypeChecked,

@@ -2,5 +2,5 @@ dist
 node_modules
 coverage
 prisma/migrations
-src/generated
+/generated
 pnpm-lock.yaml
