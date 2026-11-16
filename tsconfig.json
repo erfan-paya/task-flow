@@ -9,10 +9,6 @@
     "moduleResolution": "NodeNext",
     "types": [],
 
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
 
@@ -21,8 +17,6 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
     "noEmitOnError": true
   },
   "include": [
