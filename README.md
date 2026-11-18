@@ -137,6 +137,11 @@ The current API foundation includes a database-backed health check and shared mi
 - [Database design](docs/database-design.md)
 - [Architecture](docs/architecture.md)
 
+## License
+
+This project is licensed under the MIT License.
+See the [LICENSE](LICENSE) file for details.
+
 ## Scope note
 
 Comments are intentionally excluded from the current TaskFlow scope. They may be reconsidered later, but they are not part of the current database model or implementation roadmap.
