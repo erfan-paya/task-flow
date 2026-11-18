@@ -23,6 +23,23 @@ model User {
   ownedProjects      Project[]
   projectMemberships ProjectMember[]
   createdAssignments TaskAssignment[] @relation("AssignmentCreator")
+  refreshTokens      RefreshToken[]
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  tokenHash String    @unique
+  userId    String
+  familyId  String
+  expiresAt DateTime
+  createdAt DateTime  @default(now())
+  revokedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, familyId, expiresAt])
+  @@index([familyId])
+  @@index([expiresAt])
 }
 
 model Project {
