@@ -3,7 +3,7 @@
         "rootDir": ".",
         "outDir": "./dist",
         "paths": {
-            "@/*": ["./src/*"]
+            "@/*": ["./src/*", "./*"]
         },
 
         "target": "ES2024",
