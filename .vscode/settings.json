@@ -1,15 +1,8 @@
 {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.formatOnSave": true,
-
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": "explicit",
-        "source.organizeImports": "never"
-    },
-
-    "[prisma]": {
-        "editor.defaultFormatter": "Prisma.prisma"
-    },
-
-    "js/ts.tsdk.path": "node_modules/typescript/lib"
+        "source.fixAll.biome": "explicit",
+        "source.organizeImports.biome": "explicit"
+    }
 }

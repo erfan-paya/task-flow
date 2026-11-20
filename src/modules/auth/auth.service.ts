@@ -1,5 +1,5 @@
-import { prisma } from "@/database/prisma.js";
 import { Prisma } from "@generated/prisma/client.js";
+import { prisma } from "@/database/prisma.js";
 import type { RegisterUserInput } from "@/modules/users/user.validation.js";
 import { ConflictError } from "@/utils/app-error.js";
 import { hashPassword } from "@/utils/password.js";

@@ -1,5 +1,5 @@
 import type { Request, RequestHandler } from "express";
-import { type z, type ZodType } from "zod";
+import type { ZodType, z } from "zod";
 
 import { BadRequestError } from "@/utils/app-error.js";
 
