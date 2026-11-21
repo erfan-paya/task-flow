@@ -154,6 +154,7 @@ Feature directories are introduced as functionality is implemented; not every pl
 - [Database design](docs/database-design.md)
 - [Architecture](docs/architecture.md)
 - [Authentication](docs/authentication.md)
+- [Manual security verification](docs/manual-security-review.md)
 
 ## License
 
