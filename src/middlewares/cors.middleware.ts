@@ -12,7 +12,10 @@ export const corsMiddleware: RequestHandler = (req, res, next) => {
     if (origin && env.cors_origins.includes(origin)) {
         res.setHeader("Access-Control-Allow-Origin", origin);
         res.setHeader("Access-Control-Allow-Credentials", "true");
-        res.setHeader("Access-Control-Expose-Headers", "RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset");
+        res.setHeader(
+            "Access-Control-Expose-Headers",
+            "RateLimit-Limit, RateLimit-Remaining, RateLimit-Reset",
+        );
     }
 
     if (req.method !== "OPTIONS") {
