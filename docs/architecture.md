@@ -19,9 +19,12 @@ src/
 │   └── prisma.ts
 ├── middlewares/
 │   ├── auth.middleware.ts
-│   ├── cors.middleware.ts\n│   ├── csrf.middleware.ts
+│   ├── cors.middleware.ts
+│   ├── csrf.middleware.ts
 │   ├── error.middleware.ts
-│   ├── login-rate-limit.middleware.ts\n│   ├── not-found.middleware.ts\n│   └── security-headers.middleware.ts
+│   ├── login-rate-limit.middleware.ts
+│   ├── not-found.middleware.ts
+│   ├── security-headers.middleware.ts
 │   └── validate.middleware.ts
 ├── modules/
 │   ├── auth/
@@ -78,7 +81,7 @@ Add files only when a feature needs them. Do not create empty layers to match a 
 ### Shared infrastructure
 - `config`: validated environment and authentication configuration.
 - `database`: Prisma client and database setup.
-- `middlewares`: request validation, authentication, CSRF, not-found handling, and error handling.
+- `middlewares`: request validation, authentication, CSRF, CORS, login throttling, security headers, not-found handling, and error handling.
 - `utils`: shared application errors, token helpers, and password helpers.
 
 ## 4. Request lifecycle
