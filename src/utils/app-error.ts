@@ -25,6 +25,12 @@ export class UnauthorizedError extends AppError {
     }
 }
 
+export class ForbiddenError extends AppError {
+    constructor(message = "Forbidden") {
+        super(message, 403);
+    }
+}
+
 export class NotFoundError extends AppError {
     constructor(message = "Resource not found") {
         super(message, 404);
@@ -34,5 +40,11 @@ export class NotFoundError extends AppError {
 export class ConflictError extends AppError {
     constructor(message = "Resource already exists") {
         super(message, 409);
+    }
+}
+
+export class TooManyRequestsError extends AppError {
+    constructor(message = "Too many requests") {
+        super(message, 429);
     }
 }
