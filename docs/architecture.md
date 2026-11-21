@@ -131,11 +131,9 @@ Use database transactions when multiple writes represent one business operation.
 
 Use database foreign keys and unique constraints as the final protection for relational invariants. Application authorization must still be checked explicitly.
 
-## 9. Testing strategy
+## 9. Verification approach
 
-Automated unit tests are being introduced with Node's test runner through `tsx`. Current tests cover token utilities and request validation. Database-backed integration tests and full HTTP endpoint tests remain to be added.
-
-As features are implemented, tests should cover validation, service business rules, authorization boundaries, database constraints and transactions, HTTP status codes, response shapes, and error middleware behavior. Prefer tests that verify observable behavior and remain independent of execution order.
+Features are currently verified through manual API testing and code review. For authentication, manually verify registration, login, invalid credentials, missing/invalid/expired access tokens, refresh-token rotation, reuse detection, logout, and CSRF rejection cases. Record the tested scenarios and observed results in the project notes when useful.
 
 ## 10. Evolution principles
 
