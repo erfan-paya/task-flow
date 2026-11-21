@@ -26,7 +26,9 @@ export const loginRateLimitMiddleware: RequestHandler = (req, res, next) => {
         }
 
         if (attempts.size >= MAX_TRACKED_IPS) {
-            throw new TooManyRequestsError("Login is temporarily unavailable. Try again later.");
+            throw new TooManyRequestsError(
+                "Login is temporarily unavailable. Try again later.",
+            );
         }
 
         entry = { count: 0, resetAt: now + WINDOW_MS };
