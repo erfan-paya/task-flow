@@ -17,6 +17,7 @@
         "dev": "tsx watch src/server.ts",
         "build": "tsc && tsc-alias",
         "start": "node dist/src/server.js",
+        "test": "tsx --test tests/unit/*.test.ts",
         "lint": "biome lint .",
         "lint:fix": "biome lint --write .",
         "format": "biome format --write .",

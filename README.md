@@ -1,50 +1,52 @@
 # TaskFlow
 
-TaskFlow is a task management REST API built with Node.js, TypeScript, Express, PostgreSQL, and Prisma.
+TaskFlow is a task management REST API built with Node.js, TypeScript, Express 5, PostgreSQL, and Prisma.
 
-The project is being developed incrementally as a backend engineering practice project. The current foundation includes the Express application, environment configuration, PostgreSQL setup, Prisma schema and migrations, request validation, and centralized error handling. Business endpoints are not implemented yet.
+The project is developed incrementally as a backend engineering practice project. The current implementation includes the backend foundation, user registration and login, JWT authentication, refresh-token lifecycle management, CSRF protection, and a protected current-user endpoint. Project, membership, category, task, and assignment APIs remain future implementation work.
 
 ## Technology stack
 
-- Node.js
+- Node.js 26
 - TypeScript
 - Express 5
 - PostgreSQL 16
 - Prisma ORM 7 with the PostgreSQL driver adapter
 - Zod for request validation
-- pnpm for package management
-- Docker Compose for local PostgreSQL
+- Argon2id for password hashing
+- jose for JWT signing and verification
+- pnpm
+- Docker Compose
+- Biome for linting and formatting
 
 ## Prerequisites
 
-Install the following:
-
-- Node.js (the project was developed with Node.js 26)
+- Node.js 26
 - pnpm 12
 - Docker Engine and Docker Compose
 
 ## Getting started
 
-1. Clone the repository and enter the project directory.
+1. Clone the repository and install dependencies.
 
    ```bash
    git clone https://github.com/erfan-paya/task-flow.git
    cd task-flow
-   ```
-
-2. Install dependencies.
-
-   ```bash
    pnpm install
    ```
 
-3. Create your local environment file.
+2. Create your local environment file.
 
    ```bash
    cp .env.example .env
    ```
 
-   Update the values in `.env`. Use a strong local database password and make sure the credentials in `DATABASE_URL` match the PostgreSQL variables. URL-encode special characters in the database password when placing it in the connection URL.
+3. Generate independent secrets for JWT and CSRF:
+
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   Generate a value for each secret separately. Set `JWT_SECRET` and `CSRF_SECRET` in `.env`; each must contain at least 32 bytes. Update the database credentials and make sure `DATABASE_URL` matches the PostgreSQL variables. URL-encode special characters in the database password in the connection URL.
 
 4. Start PostgreSQL.
 
@@ -52,7 +54,7 @@ Install the following:
    docker compose up -d database
    ```
 
-5. Apply database migrations and generate the Prisma client.
+5. Apply migrations and generate the Prisma client.
 
    ```bash
    pnpm exec prisma migrate dev
@@ -65,7 +67,7 @@ Install the following:
    pnpm dev
    ```
 
-The API listens on the configured `PORT` (default: `3000`). The health endpoint is available at `GET /health`.
+The API listens on `PORT` (default: `3000`). The health endpoint is `GET /health`.
 
 ## Environment variables
 
@@ -76,9 +78,11 @@ The API listens on the configured `PORT` (default: `3000`). The health endpoint 
 | `POSTGRES_PASSWORD` | PostgreSQL password used by Docker Compose |
 | `POSTGRES_DB` | PostgreSQL database name |
 | `POSTGRES_PORT` | Host port mapped to PostgreSQL port 5432 |
-| `DATABASE_URL` | Connection URL used by the application and Prisma |
+| `DATABASE_URL` | PostgreSQL connection URL |
+| `JWT_SECRET` | Secret used to sign access JWTs (at least 32 bytes) |
+| `CSRF_SECRET` | Independent secret used to sign CSRF tokens (at least 32 bytes) |
 
-Never commit the real `.env` file. The `.env.example` file contains placeholders for local setup.
+Never commit the real `.env` file or reuse production secrets in tests.
 
 ## Available scripts
 
@@ -87,18 +91,37 @@ Never commit the real `.env` file. The `.env.example` file contains placeholders
 | `pnpm dev` | Run the API in watch mode |
 | `pnpm build` | Compile TypeScript and rewrite path aliases |
 | `pnpm start` | Run the compiled application |
-| `pnpm lint` | Run ESLint |
-| `pnpm lint:fix` | Automatically fix supported ESLint issues |
-| `pnpm format` | Format files with Prettier |
+| `pnpm test` | Run unit tests |
+| `pnpm lint` | Run Biome lint checks |
+| `pnpm lint:fix` | Apply supported Biome lint fixes |
+| `pnpm format` | Format files with Biome |
 | `pnpm format:check` | Check formatting |
+| `pnpm check` | Run Biome checks |
 | `pnpm typecheck` | Run TypeScript without emitting files |
-| `pnpm exec prisma migrate dev` | Create/apply a development migration |
-| `pnpm exec prisma generate` | Generate the Prisma client |
-| `pnpm exec prisma validate` | Validate the Prisma schema |
+
+Prisma commands:
+
+```bash
+pnpm exec prisma migrate dev
+pnpm exec prisma generate
+pnpm exec prisma validate
+```
+
+## Implemented API endpoints
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| GET | `/health` | Database-backed health check |
+| POST | `/api/v1/auth/register` | Register a user |
+| POST | `/api/v1/auth/login` | Log in and issue access/refresh credentials |
+| GET | `/api/v1/auth/csrf` | Issue a CSRF token cookie and token value |
+| POST | `/api/v1/auth/refresh` | Rotate refresh token and issue a new access token |
+| POST | `/api/v1/auth/logout` | Revoke the current refresh token |
+| GET | `/api/v1/users/me` | Return the authenticated user's profile |
+
+See [Authentication](docs/authentication.md) for the authentication lifecycle, cookie behavior, and request examples.
 
 ## Project structure
-
-The application uses a feature-oriented modular structure. Shared infrastructure lives outside feature modules; business functionality is grouped by domain.
 
 ```text
 src/
@@ -106,10 +129,8 @@ src/
 ├── database/
 ├── middlewares/
 ├── modules/
+│   ├── auth/
 │   ├── users/
-│   ├── projects/
-│   ├── tasks/
-│   ├── categories/
 │   └── health/
 ├── utils/
 ├── app.ts
@@ -119,29 +140,29 @@ prisma/
 ├── migrations/
 └── schema.prisma
 
+tests/
+└── unit/
+
 docs/
 ├── requirements.md
 ├── database-design.md
-└── architecture.md
+├── architecture.md
+└── authentication.md
 ```
 
-Feature directories are introduced as their functionality is implemented; not every directory necessarily contains completed endpoints yet.
-
-## API status
-
-The current API foundation includes a database-backed health check and shared middleware for request validation, not-found handling, and centralized errors. User registration, authentication, project management, task management, categories, and assignments remain implementation work.
+Feature directories are introduced as functionality is implemented; not every planned domain currently has API endpoints.
 
 ## Documentation
 
 - [Product requirements](docs/requirements.md)
 - [Database design](docs/database-design.md)
 - [Architecture](docs/architecture.md)
+- [Authentication](docs/authentication.md)
 
 ## License
 
-This project is licensed under the MIT License.
-See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See [LICENSE](LICENSE).
 
 ## Scope note
 
-Comments are intentionally excluded from the current TaskFlow scope. They may be reconsidered later, but they are not part of the current database model or implementation roadmap.
+Comments, notifications, attachments, real-time collaboration, and billing are outside the current TaskFlow scope.
