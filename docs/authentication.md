@@ -122,4 +122,4 @@ CORS has not yet been configured in the current application. The browser deploym
 - Refresh and logout are protected by a signed double-submit CSRF token.
 - Logging and error responses must never expose raw access tokens, refresh tokens, passwords, or secret values.
 - Access JWTs are not stored server-side, so logout and refresh-token revocation do not revoke an access JWT before its expiry.
-- Login rate limiting, automated database-backed integration tests, and production security hardening remain follow-up work.
+- Login rate limiting and production security hardening remain follow-up work.
