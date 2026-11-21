@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import type { JWTPayload } from "jose";
 import { UnauthorizedError } from "@/utils/app-error.js";
 import { verifyAccessToken } from "@/utils/jwt.js";
 
@@ -15,7 +16,7 @@ export const authenticationMiddleware: RequestHandler = async (req, _res, next) 
         throw new UnauthorizedError("Invalid authorization header.");
     }
 
-    let payload;
+    let payload: JWTPayload;
 
     try {
         ({ payload } = await verifyAccessToken(match[1]));
