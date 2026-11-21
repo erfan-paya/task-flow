@@ -82,7 +82,7 @@ The API listens on `PORT` (default: `3000`). The health endpoint is `GET /health
 | `JWT_SECRET` | Secret used to sign access JWTs (at least 32 bytes) |
 | `CSRF_SECRET` | Independent secret used to sign CSRF tokens (at least 32 bytes) |
 
-Never commit the real `.env` file or reuse production secrets in tests.
+Never commit the real `.env` file or reuse production secrets in local development.
 
 ## Available scripts
 
@@ -91,7 +91,6 @@ Never commit the real `.env` file or reuse production secrets in tests.
 | `pnpm dev` | Run the API in watch mode |
 | `pnpm build` | Compile TypeScript and rewrite path aliases |
 | `pnpm start` | Run the compiled application |
-| `pnpm test` | Run unit tests |
 | `pnpm lint` | Run Biome lint checks |
 | `pnpm lint:fix` | Apply supported Biome lint fixes |
 | `pnpm format` | Format files with Biome |
@@ -139,9 +138,6 @@ src/
 prisma/
 ├── migrations/
 └── schema.prisma
-
-tests/
-└── unit/
 
 docs/
 ├── requirements.md
