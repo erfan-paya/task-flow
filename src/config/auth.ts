@@ -17,4 +17,15 @@ export const authConfig = {
         path: "/api/v1/auth",
         maxAge: 7 * 24 * 60 * 60 * 1000,
     },
+
+    csrf: {
+        expiresInMs: 7 * 24 * 60 * 60 * 1000,
+        cookie: {
+            httpOnly: false,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax" as const,
+            path: "/api/v1/auth",
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        },
+    },
 };

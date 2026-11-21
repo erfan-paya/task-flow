@@ -71,6 +71,22 @@ export const loginUserService = async (loginInput: LoginUserInput) => {
     };
 };
 
+export const logoutUserService = async (rawToken?: string) => {
+    if (!rawToken) return;
+
+    const tokenHash = hashRefreshToken(rawToken);
+
+    await prisma.refreshToken.updateMany({
+        where: {
+            tokenHash,
+            revokedAt: null,
+        },
+        data: {
+            revokedAt: new Date(),
+        },
+    });
+};
+
 export const createRefreshToken = async (userId: string, familyId?: string) => {
     const rawToken = generateRefreshToken();
     const tokenHash = hashRefreshToken(rawToken);
