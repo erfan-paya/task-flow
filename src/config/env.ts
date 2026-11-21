@@ -4,7 +4,7 @@ const port = Number(process.env.PORT ?? 3000);
 const database_url = process.env.DATABASE_URL;
 const jwt_secret = process.env.JWT_SECRET;
 const csrf_secret = process.env.CSRF_SECRET;
-const cors_origins = (process.env.CORS_ORIGINS ?? "http://localhost:3001")
+const cors_origins = (process.env.CORS_ORIGINS ?? "")
     .split(",")
     .map((origin) => origin.trim())
     .filter(Boolean);
@@ -34,7 +34,7 @@ if (Buffer.byteLength(csrf_secret, "utf8") < 32) {
 }
 
 if (cors_origins.length === 0) {
-    throw new Error("CORS_ORIGINS must contain at least one allowed origin");
+    throw new Error("CORS_ORIGINS is required and must contain at least one allowed origin");
 }
 
 for (const origin of cors_origins) {
