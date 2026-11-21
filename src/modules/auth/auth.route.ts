@@ -15,5 +15,5 @@ export const authRouter = Router();
 authRouter.post("/register", validate(registerUserSchema), registerUserController);
 authRouter.post("/login", validate(loginUserSchema), loginUserController);
 authRouter.post("/logout", csrfMiddleware, logoutUserController);
-authRouter.post("/refresh", refreshTokenController);
-authRouter.get("/csrf", csrfMiddleware, getCsrfTokenController);
+authRouter.post("/refresh", csrfMiddleware, refreshTokenController);
+authRouter.get("/csrf", getCsrfTokenController);
