@@ -122,4 +122,5 @@ CORS is configured through the comma-separated `CORS_ORIGINS` environment variab
 - Refresh and logout are protected by a signed double-submit CSRF token.
 - Logging and error responses must never expose raw access tokens, refresh tokens, passwords, or secret values.
 - Access JWTs are not stored server-side, so logout and refresh-token revocation do not revoke an access JWT before its expiry.
-- Login requests are currently limited to 10 attempts per IP per 15-minute window. The limiter is in-memory and resets on process restart; it does not coordinate multiple API instances. Use shared rate-limit storage for a multi-instance production deployment.\n- The API sets baseline security headers and limits JSON request bodies to 16 KB. HSTS is enabled only in production; deploy the API behind HTTPS.
+- Login requests are currently limited to 10 attempts per IP per 15-minute window. The limiter is in-memory and resets on process restart; it does not coordinate multiple API instances. Use shared rate-limit storage for a multi-instance production deployment.
+- The API sets baseline security headers and limits JSON request bodies to 16 KB. HSTS is enabled only in production; deploy the API behind HTTPS.
