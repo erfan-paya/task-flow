@@ -1,8 +1,9 @@
 import { timingSafeEqual } from "node:crypto";
 import type { RequestHandler } from "express";
+import { ForbiddenError } from "@/utils/app-error.js";
 import { verifyCsrfToken } from "@/utils/csrf.js";
 
-export const csrfMiddleware: RequestHandler = (req, res, next) => {
+export const csrfMiddleware: RequestHandler = (req, _res, next) => {
     const csrfCookie = req.cookies?.csrfToken;
     const csrfHeader = req.header("X-CSRF-Token");
 
@@ -12,9 +13,7 @@ export const csrfMiddleware: RequestHandler = (req, res, next) => {
         !csrfCookie ||
         !csrfHeader
     ) {
-        return res.status(403).json({
-            error: "CSRF token missing.",
-        });
+        throw new ForbiddenError("CSRF token missing.");
     }
 
     const cookieBuffer = Buffer.from(csrfCookie, "utf8");
@@ -24,15 +23,11 @@ export const csrfMiddleware: RequestHandler = (req, res, next) => {
         cookieBuffer.length !== headerBuffer.length ||
         !timingSafeEqual(cookieBuffer, headerBuffer)
     ) {
-        return res.status(403).json({
-            error: "Invalid CSRF token.",
-        });
+        throw new ForbiddenError("Invalid CSRF token.");
     }
 
     if (!verifyCsrfToken(csrfHeader)) {
-        return res.status(403).json({
-            error: "Invalid CSRF token.",
-        });
+        throw new ForbiddenError("Invalid CSRF token.");
     }
 
     return next();
