@@ -14,18 +14,19 @@ const attempts = new Map<string, RateLimitEntry>();
 
 export const loginRateLimitMiddleware: RequestHandler = (req, res, next) => {
     const now = Date.now();
-
-    for (const [ip, entry] of attempts) {
-        if (entry.resetAt <= now) attempts.delete(ip);
-    }
-
     const key = req.ip ?? req.socket.remoteAddress ?? "unknown";
     let entry = attempts.get(key);
 
     if (!entry || entry.resetAt <= now) {
         if (attempts.size >= MAX_TRACKED_IPS) {
-            const oldestKey = attempts.keys().next().value;
-            if (oldestKey) attempts.delete(oldestKey);
+            for (const [ip, tracked] of attempts) {
+                if (tracked.resetAt <= now) attempts.delete(ip);
+                if (attempts.size < MAX_TRACKED_IPS) break;
+            }
+        }
+
+        if (attempts.size >= MAX_TRACKED_IPS) {
+            throw new TooManyRequestsError("Login is temporarily unavailable. Try again later.");
         }
 
         entry = { count: 0, resetAt: now + WINDOW_MS };
