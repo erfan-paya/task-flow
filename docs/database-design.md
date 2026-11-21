@@ -4,9 +4,10 @@
 
 TaskFlow uses PostgreSQL with Prisma ORM. The schema is relational and uses explicit foreign keys, unique constraints, indexes, and referential actions to protect data integrity.
 
-The current schema contains five models:
+The current schema contains seven models:
 
 - `User`
+- `RefreshToken`
 - `Project`
 - `ProjectMember`
 - `Task`
@@ -28,6 +29,22 @@ Stores account identity and authentication data.
 | `email` | Unique, lowercase email address |
 | `password` | Password hash; never store plaintext |
 | `createdAt`, `updatedAt` | Timestamps |
+
+### RefreshToken
+
+Stores refresh-token session records. The raw refresh token is never persisted; only its SHA-256 hash is stored.
+
+| Field | Purpose |
+| --- | --- |
+| `id` | UUID primary key |
+| `tokenHash` | Unique hash of the opaque refresh token |
+| `userId` | Required reference to the owning user |
+| `familyId` | Identifier grouping a token-rotation family |
+| `expiresAt` | Token expiration timestamp |
+| `createdAt` | Record creation timestamp |
+| `revokedAt` | Nullable revocation timestamp |
+
+A refresh operation rotates the token within its family. Revoked-token reuse is handled by the authentication service, which revokes the token family. The model indexes support user/family/expiry lookups, family-wide revocation, and expiry-based cleanup.
 
 ### Project
 
@@ -102,6 +119,7 @@ The unique pair `(taskId, userId)` prevents duplicate assignments to the same ta
 
 ## 3. Relationships
 
+- **User → RefreshToken:** one user can have many refresh-token records; each refresh-token record belongs to one user.
 - **User → Project:** one user can own many projects; each project has exactly one owner.
 - **User ↔ Project:** many-to-many through `ProjectMember`.
 - **Project → Task:** one project has many tasks; each task belongs to one project.
@@ -120,6 +138,10 @@ Comments are not part of the current model.
 | --- | --- |
 | Unique `User.email` | Prevent duplicate accounts |
 | Check `User.email = LOWER(User.email)` | Keep stored email addresses lowercase |
+| Unique `RefreshToken.tokenHash` | Prevent duplicate stored token hashes |
+| Index `RefreshToken(userId, familyId, expiresAt)` | Support user/family/expiry lookups |
+| Index `RefreshToken(familyId)` | Support token-family revocation |
+| Index `RefreshToken(expiresAt)` | Support expiry-based cleanup |
 | Unique `ProjectMember(userId, projectId)` | One membership per user and project |
 | Index `ProjectMember(projectId)` | Efficiently list members of a project |
 | Index `Project(ownerId)` | Efficiently list projects owned by a user |
@@ -145,6 +167,7 @@ This ensures an assignment connects a task to a member of that same project.
 
 | Relationship | On delete | Reason |
 | --- | --- | --- |
+| RefreshToken → User | Cascade | Remove a user's refresh-token records when the user is deleted |
 | Project → owner User | Restrict | A user cannot be deleted while they own a project |
 | ProjectMember → User | Cascade | Remove memberships when a non-owner user is deleted |
 | ProjectMember → Project | Cascade | Remove memberships when a project is deleted |
@@ -166,6 +189,7 @@ Some business rules cannot be expressed by the current schema alone and must be 
 - Only the project owner may delete a project.
 - Category deletion must first set `Task.categoryId` to null for affected tasks, then delete the category, in one transaction.
 - A user must be authorized to access a project before reading or modifying its resources.
+- Refresh-token rotation and token-family revocation must be performed transactionally to avoid inconsistent session state.
 
 ## 7. Migration notes and database validation
 
