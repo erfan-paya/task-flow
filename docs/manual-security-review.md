@@ -4,7 +4,8 @@ This checklist is intended for manual verification with Bruno, Postman, or a bro
 
 ## 1. Environment and startup
 
-- [ ] Set `CORS_ORIGINS` to the exact frontend origin, including scheme and port (for example, `http://localhost:3001`).\n- [ ] Confirm startup fails when `CORS_ORIGINS` is missing or empty.
+- [ ] Set `CORS_ORIGINS` to the exact frontend origin, including scheme and port (for example, `http://localhost:3001`).
+- [ ] Confirm startup fails when `CORS_ORIGINS` is missing or empty.
 - [ ] For production, use the deployed HTTPS frontend origin only.
 - [ ] Start the API and confirm it connects to PostgreSQL.
 - [ ] Confirm startup fails when a required secret is missing or shorter than 32 bytes.
