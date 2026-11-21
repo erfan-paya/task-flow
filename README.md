@@ -73,7 +73,8 @@ The API listens on `PORT` (default: `3000`). The health endpoint is `GET /health
 
 | Variable | Description |
 | --- | --- |
-| `PORT` | HTTP server port |\n| `CORS_ORIGINS` | Comma-separated exact browser origins allowed to call the API (for example `http://localhost:3001`) |
+| `PORT` | HTTP server port |
+| `CORS_ORIGINS` | Comma-separated exact browser origins allowed to call the API (for example `http://localhost:3001`) |
 | `POSTGRES_USER` | PostgreSQL user used by Docker Compose |
 | `POSTGRES_PASSWORD` | PostgreSQL password used by Docker Compose |
 | `POSTGRES_DB` | PostgreSQL database name |
