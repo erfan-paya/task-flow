@@ -19,9 +19,12 @@ src/
 │   └── prisma.ts
 ├── middlewares/
 │   ├── auth.middleware.ts
+│   ├── cors.middleware.ts
 │   ├── csrf.middleware.ts
 │   ├── error.middleware.ts
+│   ├── login-rate-limit.middleware.ts
 │   ├── not-found.middleware.ts
+│   ├── security-headers.middleware.ts
 │   └── validate.middleware.ts
 ├── modules/
 │   ├── auth/
@@ -78,7 +81,7 @@ Add files only when a feature needs them. Do not create empty layers to match a 
 ### Shared infrastructure
 - `config`: validated environment and authentication configuration.
 - `database`: Prisma client and database setup.
-- `middlewares`: request validation, authentication, CSRF, not-found handling, and error handling.
+- `middlewares`: request validation, authentication, CSRF, CORS, login throttling, security headers, not-found handling, and error handling.
 - `utils`: shared application errors, token helpers, and password helpers.
 
 ## 4. Request lifecycle
@@ -90,7 +93,7 @@ Add files only when a feature needs them. Do not create empty layers to match a 
 5. The controller sends the HTTP response.
 6. Errors are forwarded to centralized error middleware.
 
-The not-found middleware handles unmatched routes. The error middleware handles application errors and unexpected failures, returning client-safe responses without leaking internal details. Some authentication and CSRF middleware currently return their 401/403 responses directly; standardizing those response paths is a known code-quality follow-up.
+The not-found middleware handles unmatched routes. The error middleware handles application errors and unexpected failures, returning client-safe responses without leaking internal details. Authentication and CSRF failures are represented as application errors and handled centrally. CORS, baseline security headers, a 16 KB JSON body limit, and login rate limiting are applied at the HTTP boundary.
 
 ## 5. Authentication architecture
 

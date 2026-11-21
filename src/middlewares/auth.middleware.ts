@@ -1,42 +1,36 @@
 import type { RequestHandler } from "express";
+import type { JWTPayload } from "jose";
+import { UnauthorizedError } from "@/utils/app-error.js";
 import { verifyAccessToken } from "@/utils/jwt.js";
 
-export const authenticationMiddleware: RequestHandler = async (req, res, next) => {
+export const authenticationMiddleware: RequestHandler = async (req, _res, next) => {
     const authHeader = req.header("Authorization");
 
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({
-            status: "error",
-            message: "Access token required",
-        });
+    if (!authHeader) {
+        throw new UnauthorizedError("Access token required.");
     }
 
-    const token = authHeader.slice(7).trim();
-    if (!token || token.includes(" ")) {
-        return res.status(401).json({
-            status: "error",
-            message: "Invalid authorization header",
-        });
+    const match = /^Bearer\s+(\S+)$/i.exec(authHeader);
+
+    if (!match?.[1]) {
+        throw new UnauthorizedError("Invalid authorization header.");
     }
+
+    let payload: JWTPayload;
 
     try {
-        const { payload } = await verifyAccessToken(token);
-
-        if (!payload.sub) {
-            return res.status(401).json({
-                error: "Invalid access token",
-            });
-        }
-
-        req.user = {
-            id: payload.sub,
-        };
-
-        return next();
+        ({ payload } = await verifyAccessToken(match[1]));
     } catch {
-        return res.status(401).json({
-            status: "error",
-            message: "Invalid or expired access token",
-        });
+        throw new UnauthorizedError("Invalid or expired access token.");
     }
+
+    if (!payload.sub) {
+        throw new UnauthorizedError("Invalid access token.");
+    }
+
+    req.user = {
+        id: payload.sub,
+    };
+
+    return next();
 };

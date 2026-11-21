@@ -67,13 +67,14 @@ The project is developed incrementally as a backend engineering practice project
    pnpm dev
    ```
 
-The API listens on `PORT` (default: `3000`). The health endpoint is `GET /health`.
+The API listens on `PORT` (default: `3000`). The health endpoint is `GET /health`. JSON request bodies are limited to 16 KB.
 
 ## Environment variables
 
 | Variable | Description |
 | --- | --- |
 | `PORT` | HTTP server port |
+| `CORS_ORIGINS` | Comma-separated exact browser origins allowed to call the API (for example `http://localhost:3001`) |
 | `POSTGRES_USER` | PostgreSQL user used by Docker Compose |
 | `POSTGRES_PASSWORD` | PostgreSQL password used by Docker Compose |
 | `POSTGRES_DB` | PostgreSQL database name |
@@ -82,7 +83,7 @@ The API listens on `PORT` (default: `3000`). The health endpoint is `GET /health
 | `JWT_SECRET` | Secret used to sign access JWTs (at least 32 bytes) |
 | `CSRF_SECRET` | Independent secret used to sign CSRF tokens (at least 32 bytes) |
 
-Never commit the real `.env` file or reuse production secrets in local development.
+Never commit the real `.env` file or reuse production secrets in local development. `CORS_ORIGINS` is required. Set it to your actual frontend origin(s); use exact origins including scheme and port, with no trailing slash. Production should normally allow only the deployed frontend origin.
 
 ## Available scripts
 
@@ -154,6 +155,7 @@ Feature directories are introduced as functionality is implemented; not every pl
 - [Database design](docs/database-design.md)
 - [Architecture](docs/architecture.md)
 - [Authentication](docs/authentication.md)
+- [Manual security verification](docs/manual-security-review.md)
 
 ## License
 

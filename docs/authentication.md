@@ -112,7 +112,7 @@ The intended frontend and API hosts are `app.taskflow.com` and `api.taskflow.com
 - The CSRF cookie is readable by frontend JavaScript so its value can be copied into the request header.
 - CSRF protection remains necessary for cookie-authenticated endpoints.
 
-CORS has not yet been configured in the current application. The browser deployment flow must not be considered complete until an explicit frontend-origin allowlist and credentialed preflight handling are implemented.
+CORS is configured through the comma-separated `CORS_ORIGINS` environment variable. It allows exact origins only, enables credentials for approved origins, and handles preflight requests. Never use `*` with credentialed requests. Set the production value to the deployed frontend origin, such as `https://app.taskflow.com`, and ensure the frontend sends credentialed requests when it needs the refresh cookie.
 
 ## 5. Security boundaries and limitations
 
@@ -122,4 +122,5 @@ CORS has not yet been configured in the current application. The browser deploym
 - Refresh and logout are protected by a signed double-submit CSRF token.
 - Logging and error responses must never expose raw access tokens, refresh tokens, passwords, or secret values.
 - Access JWTs are not stored server-side, so logout and refresh-token revocation do not revoke an access JWT before its expiry.
-- Login rate limiting and production security hardening remain follow-up work.
+- Login requests are currently limited to 10 attempts per IP per 15-minute window. The limiter is in-memory and resets on process restart; it does not coordinate multiple API instances. Use shared rate-limit storage for a multi-instance production deployment.
+- The API sets baseline security headers and limits JSON request bodies to 16 KB. HSTS is enabled only in production; deploy the API behind HTTPS.
