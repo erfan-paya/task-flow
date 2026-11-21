@@ -50,7 +50,9 @@ for (const origin of cors_origins) {
         !["http:", "https:"].includes(parsedOrigin.protocol) ||
         parsedOrigin.origin !== origin
     ) {
-        throw new Error(`CORS_ORIGINS entries must be HTTP(S) origins without paths: ${origin}`);
+        throw new Error(
+            `CORS_ORIGINS entries must be HTTP(S) origins without paths: ${origin}`,
+        );
     }
 }
 
