@@ -40,7 +40,9 @@ The project is developed incrementally as a backend engineering practice project
    cp .env.example .env
    ```
 
-3. Generate independent secrets for JWT and CSRF:
+3. Configure `CORS_ORIGINS` in `.env` with the exact origin of your frontend. For local development, the example value is `http://localhost:3001`. Include the scheme and port when applicable, separate multiple origins with commas, and do not add paths or trailing slashes.
+
+4. Generate independent secrets for JWT and CSRF:
 
    ```bash
    openssl rand -base64 32
@@ -48,20 +50,20 @@ The project is developed incrementally as a backend engineering practice project
 
    Generate a value for each secret separately. Set `JWT_SECRET` and `CSRF_SECRET` in `.env`; each must contain at least 32 bytes. Update the database credentials and make sure `DATABASE_URL` matches the PostgreSQL variables. URL-encode special characters in the database password in the connection URL.
 
-4. Start PostgreSQL.
+5. Start PostgreSQL.
 
    ```bash
    docker compose up -d database
    ```
 
-5. Apply migrations and generate the Prisma client.
+6. Apply migrations and generate the Prisma client.
 
    ```bash
    pnpm exec prisma migrate dev
    pnpm exec prisma generate
    ```
 
-6. Start the development server.
+7. Start the development server.
 
    ```bash
    pnpm dev
